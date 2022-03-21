@@ -1,26 +1,10 @@
-// A note about error handling
+// background on error handling in Rust, read this page of the Rust book and this blog post.
+use std::result::Result;
+use url::{Position, Url};
 
-use error_chain::error_chain;
-use std::net::IpAddr;
-use std::str;
-
-error_chain! {
-    foreign_links {
-        Utf8(std::str::Utf8Error);
-        AddrParse(std::net::AddrParseError);
-    }
-}
-
-fn main() -> Result<()> {
-    let bytes = b"2001:db8::1";
-
-    // Bytes to string.
-    let s = str::from_utf8(bytes)?;
-
-    // String to IP address.
-    let addr: IpAddr = s.parse()?;
-
-    println!("{addr:?}");
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let parsed = Url::parse("https://httpbin.org/cookies/set?k2=v2&k1=v1")?;
+    let cleaned: &str = &parsed[..Position::AfterPath];
+    println!("cleaned: {}", cleaned);
     Ok(())
-}
-
+} 
